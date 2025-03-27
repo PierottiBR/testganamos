@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from funciones_ganamos import login_ganamos, nuevo_jugador, carga_ganamos, retirar_ganamos, guardar_usuario
-from fastapi import FastAPI, Request
 import mercadopago
 
 csv_file = 'data.csv'
