@@ -2,7 +2,6 @@ import requests
 import os
 import pandas as pd
 import streamlit as st
-import mercadopago
 from funciones_ganamos import *
 
 
