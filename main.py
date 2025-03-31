@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 
 # Configuración
-API_URL = "https://render-notify-mp.onrender.com/notificacion/"  # Cambiar por tu URL real
+API_URL = "https://render-notify-mp.onrender.com"  # Cambiar por tu URL real
 st.set_page_config(
     page_title="Sistema de Pagos Reales",
     page_icon="💳",
@@ -57,11 +57,12 @@ with st.form("form_pago"):
         elif not validar_email(email_comprador):
             st.error("Ingresa un email válido")
         else:
-            result = call_api("crear_pago", {
+            result = call_api("crear_pago/", {
                 "usuario_id": usuario_id,
                 "monto": float(monto),
                 "email": email_comprador
             })
+            st.write(result)
             
             if result.get("error"):
                 st.error(f"Error: {result.get('detail', 'Contacta al soporte')}")
