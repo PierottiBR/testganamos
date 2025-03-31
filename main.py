@@ -1,151 +1,146 @@
 import streamlit as st
-import pandas as pd
-from funciones_ganamos import login_ganamos, nuevo_jugador, carga_ganamos, retirar_ganamos, guardar_usuario
-import mercadopago
+import requests
+from datetime import datetime
+import re
 
-csv_file = 'data.csv'
+# Configuración
+API_URL = "http://127.0.0.1:8000/"  # Cambiar por tu URL real
+st.set_page_config(
+    page_title="Sistema de Pagos Reales",
+    page_icon="💳",
+    layout="wide"
+)
 
-usuario = 'adminflamingo'
-contrasenia = '1111aaaa'
+# Estado de la sesión
+if 'preference_id' not in st.session_state:
+    st.session_state.preference_id = None
+if 'payment_id' not in st.session_state:
+    st.session_state.payment_id = None
+if 'usuario_id' not in st.session_state:
+    st.session_state.usuario_id = ""
+if 'email_comprador' not in st.session_state:
+    st.session_state.email_comprador = ""
+if 'ultima_verificacion' not in st.session_state:
+    st.session_state.ultima_verificacion = None
 
-ACCESS_TOKEN = "APP_USR-7399764412139422-042622-5c8000e5a8932bbbdae5e8d418480e65-89912040"
-mp = mercadopago.SDK(ACCESS_TOKEN)
+# Funciones auxiliares
+def validar_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-st.set_page_config(page_title='TEST PAGE', page_icon='assets/ico.ico', layout='wide')
+def call_api(endpoint, payload):
+    try:
+        response = requests.post(
+            f"{API_URL}/{endpoint}",
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=15
+        )
+        return response.json() if response.status_code == 200 else {"error": True, "detail": response.text}
+    except Exception as e:
+        return {"error": True, "detail": str(e)}
 
-tab1 = st.tabs(['CREAR USUARIO', 'CARGAR SALDO', 'RETIRAR SALDO'])
+# Interfaz
+st.title("💵 Sistema de Carga de Saldo")
 
-with tab1[0]:
-    st.subheader("Crear Usuario")
-    new_user = st.text_input('Nombre de Usuario', key='name_usuario')
-    pass_user = st.text_input('Contraseña', key='contra_usuario', type='password')
+with st.form("form_pago"):
+    col1, col2 = st.columns(2)
+    with col1:
+        usuario_id = st.text_input("ID de Usuario*:", value=st.session_state.usuario_id)
+    with col2:
+        email_comprador = st.text_input("Email del Comprador*:", value=st.session_state.email_comprador)
     
-    if st.button('Crear Usuario'):
-        guardar_usuario(usuario=new_user, contraseña=pass_user)
-
-with tab1[1]:
-    st.subheader("Cargar Saldo")
-   
-    def cargar_saldo():
-        """Función para generar un pago en MercadoPago"""
-        st.title("Cargar saldo a tu cuenta en Juegos Online")
-
-        alias = st.text_input("Ingresa tu usuario de Ganamos")
-        monto = st.number_input("Selecciona el monto a cargar (ARS)", min_value=1, step=1)
-
-        if monto > 0:
-            if st.button("Proceder al pago"):
-                preference_data = {
-                    "items": [
-                        {
-                            "title": "Carga de saldo para juegos online",
-                            "quantity": 1,
-                            "unit_price": float(monto),
-                            "currency_id": "ARS"
-                        }
-                    ],
-                    "back_urls": {
-                        "success": "https://testganamos.streamlit.app/success",  # Página de éxito
-                        "failure": "https://testganamos.streamlit.app/failure", # Pagina de fallo
-                    },
-                    "auto_return": "approved"
-                }
-
-                preference = mp.preference().create(preference_data)
-
-                if "response" in preference and "init_point" in preference["response"]:
-                    url_pago = preference["response"]["init_point"]
-                    st.markdown(f"[Pagar con MercadoPago]({url_pago})", unsafe_allow_html=True)
-                else:
-                    st.error("Error al generar el enlace de pago.")
-                    st.write("Respuesta de MercadoPago:", preference)
-
-    def verificar_pago():
-        """Verifica si el pago fue exitoso y carga el saldo en Ganamos"""
-        st.title("Confirmación de Pago")
-
-        query_params = st.query_params
-        st.write("Parámetros recibidos:", query_params)  # DEBUG: Ver qué llega de MercadoPago
-
-        estado_pago = query_params.get("collection_status", [""])[0]
-        alias = st.session_state.get("alias")
-        monto = st.session_state.get("monto")
-
-        if estado_pago == "approved":
-            st.success("¡Pago aprobado! Cargando saldo...")
-            
-            if alias and monto:
-                exito, balance = carga_ganamos(alias, monto, usuario, contrasenia)
-                if exito:
-                    st.success(f"Saldo de {monto} ARS cargado correctamente en la cuenta {alias}.")
-                else:
-                    st.error("Error al cargar saldo en Ganamos.")
-            else:
-                st.error("No se encontraron los datos del usuario para cargar saldo.")
-        
-        elif estado_pago == "pending":
-            st.warning("El pago está pendiente. Por favor, espera la confirmación.")
-        
+    monto = st.number_input("Monto (ARS)*:", min_value=10.0, value=50.0, step=10.0)
+    
+    if st.form_submit_button("Generar Pago", type="primary"):
+        if not all([usuario_id, email_comprador, monto > 0]):
+            st.error("Completa todos los campos obligatorios (*)")
+        elif not validar_email(email_comprador):
+            st.error("Ingresa un email válido")
         else:
-            st.error("El pago fue rechazado o falló. Intenta nuevamente.")
+            result = call_api("crear_pago", {
+                "usuario_id": usuario_id,
+                "monto": float(monto),
+                "email": email_comprador
+            })
+            
+            if result.get("error"):
+                st.error(f"Error: {result.get('detail', 'Contacta al soporte')}")
+            else:
+                st.session_state.preference_id = result["preference_id"]
+                st.session_state.usuario_id = usuario_id
+                st.session_state.email_comprador = email_comprador
+                
+                st.success("¡Pago listo para procesar!")
+                st.markdown(
+                    f"""
+                    <div style='border:1px solid #e6e6e6; padding:15px; border-radius:8px; margin-top:20px;'>
+                        <h3 style='color:#00a650;'>🛒 Orden de Pago</h3>
+                        <p><strong>Usuario:</strong> {usuario_id}</p>
+                        <p><strong>Email:</strong> {email_comprador}</p>
+                        <p><strong>Monto:</strong> ${monto:.2f} ARS</p>
+                        <a href="{result['url_pago']}" target="_blank">
+                            <button style='
+                                background-color: #00a650;
+                                color: white;
+                                padding: 12px 24px;
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 16px;
+                                margin-top: 10px;
+                                cursor: pointer;'>
+                                Pagar con Mercado Pago
+                            </button>
+                        </a>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-    # Determinar qué función ejecutar según el estado del pago
-    query_params = st.query_params
-    status = query_params.get("status", [""])[0]
+# Sección de verificación
+st.divider()
+st.subheader("Verificación de Pago")
 
-    if status == "success":
-        verificar_pago()
+if st.button("Consultar Estado", key="verificar_pago"):
+    if not st.session_state.preference_id:
+        st.warning("Primero genera un pago")
     else:
-        cargar_saldo()
+        with st.spinner("Verificando estado..."):
+            result = call_api("verificar_pago", {
+                "preference_id": st.session_state.preference_id,
+                "usuario_id": st.session_state.usuario_id
+            })
+            
+            st.session_state.ultima_verificacion = datetime.now()
+            
+            if result.get("error"):
+                st.error(f"Error: {result.get('detail')}")
+            else:
+                if result.get("status") == "approved":
+                    st.session_state.payment_id = result.get("payment_id")
+                    st.balloons()
+                    st.success(f"""
+                    ✅ **Pago Aprobado**  
+                    - **ID Transacción:** {result.get('payment_id')}  
+                    - **Monto:** ${result.get('monto', 0):.2f} ARS  
+                    - **Fecha:** {result.get('fecha', 'N/A')}  
+                    """)
+                else:
+                    st.warning(f"""
+                    ⚠️ **Estado Actual:** {result.get('status', 'pending')}  
+                    *Los pagos pueden tardar hasta 5 minutos en procesarse*
+                    """)
 
-with tab1[2]:
-    st.subheader("Retirar Saldo")
-    if st.button('Retirar Saldo'):
-        st.warning("Función de retiro") 
+if st.session_state.ultima_verificacion:
+    st.caption(f"Última verificación: {st.session_state.ultima_verificacion.strftime('%H:%M:%S')}")
 
+# Panel de información
+st.sidebar.markdown("""
+### 📌 Instrucciones
+1. Ingresa tu **ID de usuario** y **email real**
+2. Genera el pago y completa el proceso en Mercado Pago
+3. Verifica el estado cuando finalices
 
-
-# Página de éxito del pago
-def pagina_exito():
-    st.title("Pago Exitoso")
-    st.success("¡Gracias! El pago se ha realizado con éxito. Tu saldo ha sido cargado.")
-    
-    # Aquí podrías mostrar detalles adicionales, como el saldo cargado, alias, etc.
-    alias = st.session_state.get('alias', 'Usuario desconocido')
-    monto = st.session_state.get('monto', 0)
-    
-    if alias and monto:
-        st.write(f"Saldo de {monto} ARS ha sido cargado correctamente en la cuenta de {alias}.")
-    else:
-        st.error("No se encontraron datos de la carga de saldo.")
-    
-    # Botón para regresar o continuar con otras acciones
-    if st.button("Regresar al inicio"):
-        st.experimental_rerun()  # Vuelve a cargar la página inicial o la página de carga de saldo
-
-# Página de fallo del pago
-def pagina_fallo():
-    st.title("Pago Fallido")
-    st.error("El pago ha sido rechazado o ha fallado. Intenta nuevamente.")
-    
-    # Mostrar un mensaje de error o opciones para reintentar el pago
-    st.write("Por favor, verifica los detalles de tu pago y vuelve a intentar.")
-    
-    # Botón para regresar y volver a intentar
-    if st.button("Intentar de nuevo"):
-        st.experimental_rerun()  # Vuelve a cargar la página de carga de saldo para intentar nuevamente
-
-# Determinar qué página mostrar según la URL
-def mostrar_pagina():
-    query_params = st.query_params  # Obtén los parámetros de la URL
-    
-    if "success" in query_params:
-        pagina_exito()
-    elif "failure" in query_params:
-        pagina_fallo()
-    else:
-        st.info("Esperando confirmación de pago...")
-        # Aquí podrías mostrar la página de inicio o cargar saldo si no hay parámetros
-
-# Mostrar la página según los parámetros de la URL
-mostrar_pagina()
+### 📞 Soporte
+123@twinky.com  
+Tel: +54 11 1234-5678
+""")
