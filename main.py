@@ -33,6 +33,9 @@ def show_premios():
             },
             'text': {
                 'color': 'black'
+            },
+            'title': {
+                'color': 'black'
             }
         }
     )
