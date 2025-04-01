@@ -17,7 +17,7 @@ st.set_page_config(
 def show_premios():
     card(
         title="Vegas365",
-        text="Equipo Campeon",
+        text="",
         image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
         url= 'http://wa.link/fv17jl',
         styles={
@@ -30,6 +30,9 @@ def show_premios():
             },
             "filter": {
                 "background-color": "rgba(0, 0, 0, 0)"  # <- make the image not dimmed anymore
+            },
+            'text': {
+                'color': 'black'
             }
         }
     )
