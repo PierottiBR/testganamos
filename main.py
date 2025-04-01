@@ -19,6 +19,7 @@ def show_premios():
         title="Campeon 🏆",
         text="Equipo Campeon",
         image="https://placekitten.com/500/500",
+        url= 'http://wa.link/fv17jl',
         styles={
             "card": {
                 "width": "100%",
@@ -32,3 +33,5 @@ def show_premios():
             }
         }
     )
+
+show_premios()
