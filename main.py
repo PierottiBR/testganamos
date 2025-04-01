@@ -16,8 +16,8 @@ st.set_page_config(
 
 def show_premios():
     card(
-        title="Vegas365",
-        text="",
+        title="Vegas 365 Games",
+        text="CONTACTA A UN CAJERO",
         image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
         url= 'http://wa.link/fv17jl',
         styles={
