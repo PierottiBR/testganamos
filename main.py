@@ -23,7 +23,7 @@ def show_premios():
         styles={
             "card": {
                 "width": "100%",
-                "height": "200px",
+                "height": "1200px",
                 "border-radius": "60px",
                 "box-shadow": "0 0 50px rgba(255, 215, 0, 1)",
                 "margin-bottom": "0px"
