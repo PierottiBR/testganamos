@@ -16,14 +16,14 @@ st.set_page_config(
 
 def show_premios():
     card(
-        title="Campeon 🏆",
+        title="Vegas365",
         text="Equipo Campeon",
         image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
         url= 'http://wa.link/fv17jl',
         styles={
             "card": {
                 "width": "100%",
-                "height": "1200px",
+                "height": "200px",
                 "border-radius": "60px",
                 "box-shadow": "0 0 50px rgba(255, 215, 0, 1)",
                 "margin-bottom": "0px"
