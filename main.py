@@ -19,7 +19,7 @@ def show_premios():
         title="Vegas 365 Games",
         text="CONTACTA A UN CAJERO",
         image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
-        url= 'http://wa.link/fv17jl',
+        url= 'http://wa.link/ov016e',
         styles={
             "card": {
                 "width": "100%",
