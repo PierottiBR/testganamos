@@ -18,7 +18,7 @@ def show_premios():
     card(
         title="Campeon 🏆",
         text="Equipo Campeon",
-        image="https://placekitten.com/500/500",
+        image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
         url= 'http://wa.link/fv17jl',
         styles={
             "card": {
