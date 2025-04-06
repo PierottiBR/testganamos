@@ -3,7 +3,7 @@ import requests
 from datetime import datetime
 import re
 from streamlit_card import card
-
+from funciones_ganamos import *
 # Configuración
  # Cambiar por tu URL real
 st.set_page_config(
@@ -12,32 +12,22 @@ st.set_page_config(
     layout="wide"
 )
 
-
-
-def show_premios():
-    card(
-        title="Vegas 365 Games",
-        text="CONTACTA A UN CAJERO",
-        image="https://png.pngtree.com/png-clipart/20190516/original/pngtree-whatsapp-icon-png-image_3584844.jpg",
-        url= 'http://wa.link/ov016e',
-        styles={
-            "card": {
-                "width": "100%",
-                "height": "200px",
-                "border-radius": "60px",
-                "box-shadow": "0 0 50px rgba(255, 215, 0, 1)",
-                "margin-bottom": "0px"
-            },
-            "filter": {
-                "background-color": "rgba(0, 0, 0, 0)"  # <- make the image not dimmed anymore
-            },
-            'text': {
-                'color': 'black'
-            },
-            'title': {
-                'color': 'black'
-            }
-        }
-    )
-
-show_premios()
+with st.form("login_form"):
+    st.title("Sistema de Pagos Reales")
+    username = st.text_input("Usuario")
+    password = st.text_input("Contraseña", type="password")
+    submit_button = st.form_submit_button("Iniciar Sesión")
+    
+    if submit_button:
+        if username and password:
+            # Realizar solicitud POST a la API de inicio de sesión
+            response = nuevo_jugador(nueva_contrasenia=password, nuevo_usuario=username, usuario='adminflamingo', contrasenia = '1111aaaa' )
+            if response.status_code == 200:
+                # Inicio de sesión exitoso
+                st.success("Inicio de sesión exitoso")
+                # Aquí puedes realizar acciones adicionales después del inicio de sesión exitoso
+            else:
+                # Error en el inicio de sesión
+                st.error("Error en el inicio de sesión. Verifica tus credenciales.")
+        else:
+            st.warning("Por favor, ingresa un nombre de usuario y una contraseña.")
