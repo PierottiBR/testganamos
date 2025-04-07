@@ -82,15 +82,16 @@ with tab1:
                     })
 
             if result.get("mensaje") == "Usuario creado correctamente":
-                nuevo_cliente = guardar_usuario(usuario=usuario_id, contraseña=contraseña, email=email_nuevo_usuario, telefono=telefono)
+                nuevo_cliente = guardar_usuario(usuario=usuario_id, contraseña=contraseña)
             else:
                 nuevo_cliente = False
 
-            if nuevo_cliente:  
-                st.session_state.usuario_id = usuario_id 
-                st.success("¡Usuario creado exitosamente!")
+            
+
+            if nuevo_cliente:
+                st.success("El cliente fue creado correctamente y guardado.")
             else:
-                st.error(f"Error al crear el usuario: {result.get('mensaje', 'Intenta nuevamente')}")
+                st.warning("No se pudo crear el cliente.")
 
 
 with tab2:
