@@ -7,7 +7,7 @@ from funciones_ganamos import *
 
 
 # Configuración
-API_URL = "https://streamlit-test-eiu8.onrender.com"
+API_URL = "https://render-notify-mp.onrender.com"
 TIMEOUT_API = 30
 st.set_page_config(
     page_title="Sistema de Pagos Reales",
@@ -76,14 +76,22 @@ with tab1:
                 st.error("Las contraseñas no coinciden")
             else:
                 with st.spinner("Creando usuario..."):
-                    result = nuevo_jugador(nueva_contrasenia=contraseña, nuevo_usuario=usuario_id)
-                    nuevo_cliente = guardar_usuario(usuario=usuario_id, contraseña=contraseña, email=email_nuevo_usuario, telefono=telefono)
-                    st.write("Resultado:", result)
-                if nuevo_cliente:  
-                    st.session_state.usuario_id = usuario_id 
-                    st.success("¡Usuario creado exitosamente!")
-                else:
-                    st.error("Error al crear el usuario. Intenta nuevamente.")
+                    result = call_api("crear_jugador", {
+                        "usuario": usuario_id,
+                        "contrasenia": contraseña
+                    })
+
+            if result.get("mensaje") == "Usuario creado correctamente":
+                nuevo_cliente = guardar_usuario(usuario=usuario_id, contraseña=contraseña, email=email_nuevo_usuario, telefono=telefono)
+            else:
+                nuevo_cliente = False
+
+        if nuevo_cliente:  
+            st.session_state.usuario_id = usuario_id 
+            st.success("¡Usuario creado exitosamente!")
+        else:
+            st.error(f"Error al crear el usuario: {result.get('mensaje', 'Intenta nuevamente')}")
+
 
 with tab2:
         st.title("💵 Carga de Saldo")
