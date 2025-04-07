@@ -215,13 +215,17 @@ def nuevo_jugador(nueva_contrasenia, nuevo_usuario, usuario, contrasenia ):
 csv_file = 'data.csv'
 
 def guardar_usuario(usuario, contraseña):
-        
     if not usuario or not contraseña:
         st.warning('Debe ingresar un usuario y una contraseña.')
-        return
-    
-    resultado, lista_usuarios = nuevo_jugador(nuevo_usuario=usuario, nueva_contrasenia=contraseña, usuario='adminflamingo', contrasenia='1111aaaa')
-    
+        return False  # Devuelve False si faltan datos
+
+    resultado, lista_usuarios = nuevo_jugador(
+        nuevo_usuario=usuario,
+        nueva_contrasenia=contraseña,
+        usuario='adminflamingo',
+        contrasenia='1111aaaa'
+    )
+
     if 'Usuario creado' in resultado:
         nuevo_dato = pd.DataFrame({'user': [usuario], 'password': [contraseña]})
         
@@ -230,10 +234,13 @@ def guardar_usuario(usuario, contraseña):
             df = pd.concat([df, nuevo_dato], ignore_index=True)
         else:
             df = nuevo_dato
-        
+
         df.to_csv(csv_file, index=False)
         st.success('Usuario creado!!!')
+        return True  # Devuelve True si fue exitoso
+
     else:
         st.warning(resultado)
+        return False  # Devuelve False si no fue exitoso
 
 
