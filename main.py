@@ -86,11 +86,11 @@ with tab1:
             else:
                 nuevo_cliente = False
 
-        if nuevo_cliente:  
-            st.session_state.usuario_id = usuario_id 
-            st.success("¡Usuario creado exitosamente!")
-        else:
-            st.error(f"Error al crear el usuario: {result.get('mensaje', 'Intenta nuevamente')}")
+            if nuevo_cliente:  
+                st.session_state.usuario_id = usuario_id 
+                st.success("¡Usuario creado exitosamente!")
+            else:
+                st.error(f"Error al crear el usuario: {result.get('mensaje', 'Intenta nuevamente')}")
 
 
 with tab2:
