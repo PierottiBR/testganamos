@@ -91,7 +91,7 @@ with tab1:
             if nuevo_cliente:
                 st.success("El cliente fue creado correctamente y guardado.")
             else:
-                st.warning("No se pudo crear el cliente.")
+                st.warning(f"No se pudo crear el cliente. {result.get('detail')}")
 
 
 with tab2:
