@@ -17,6 +17,11 @@ def login_ganamos(usuario,contrasenia):
     "username": usuario    
     }
 
+    proxies = {
+        "http": "http://45.191.4.253:8080",
+        "https": "http://45.191.4.253:8080"
+    }
+
     headers = {
     "authority": "agents.ganamos.bet",
     "method": "POST",
@@ -40,7 +45,7 @@ def login_ganamos(usuario,contrasenia):
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
     }
 
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(url, json=data, headers=headers,proxies=proxies)
     if response.status_code == 200:
         session_id = response.cookies["session"]
 
