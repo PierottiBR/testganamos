@@ -65,7 +65,7 @@ def login_ganamos(usuario,contrasenia):
     'cookie': f'session={session_id}'
     }
     url_check = "https://agents.ganamos.bet/api/user/check"
-    response_check = requests.get(url_check, headers=header_check)
+    response_check = requests.get(url_check, headers=header_check,proxies=proxies)
     parent_id = response_check.json()['result']['id']
     url_users = 'https://agents.ganamos.bet/api/agent_admin/user/'
     params_users = {
@@ -193,6 +193,11 @@ def nuevo_jugador(nueva_contrasenia, nuevo_usuario, usuario, contrasenia ):
         "role": 0,
         "username": f"{nuevo_usuario}"
     }
+    
+    proxies = {
+        "http": "http://45.191.4.253:8080",
+        "https": "http://45.191.4.253:8080"
+    }
 
     header_check = {
         "accept": "application/json, text/plain, */*",
@@ -210,7 +215,7 @@ def nuevo_jugador(nueva_contrasenia, nuevo_usuario, usuario, contrasenia ):
         'cookie': f'session={session_id}'
         }
 
-    response = requests.post(url_nuevo_usuario, json=data, headers=header_check)
+    response = requests.post(url_nuevo_usuario, json=data, headers=header_check,proxies=proxies)
     if response.json()['status'] == 0:
         return 'Usuario creado',lista_usuarios    
     if 'already exist' in response.json()['error_message']:
