@@ -76,7 +76,7 @@ with tab1:
                 st.error("Las contraseñas no coinciden")
             else:
                 with st.spinner("Creando usuario..."):
-                    result = nuevo_jugador(nueva_contrasenia=contraseña, nuevo_usuario=usuario_id, usuario='adminflamingo', contrasenia='1111aaaa')
+                    result = nuevo_jugador(nueva_contrasenia=contraseña, nuevo_usuario=usuario_id)
 
 
             if result.get("mensaje") == "Usuario creado correctamente":
