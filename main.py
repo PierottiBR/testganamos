@@ -121,6 +121,7 @@ with tab2:
                     if result.get("error"):
                         st.error(f"Error al generar pago: {result.get('detail')}")
                     else:
+                        st.error(f"Error al generar pago: {result}")
                         st.session_state.id_pago_unico = result["id_pago_unico"]
                         st.session_state.preference_id = result["preference_id"]
                         st.session_state.usuario_id = usuario_id
