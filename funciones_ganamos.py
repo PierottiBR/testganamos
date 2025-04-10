@@ -179,7 +179,7 @@ def retirar_ganamos(alias, monto, usuario, contrasenia):
          return False, balance_ganamos
     
 
-def nuevo_jugador(nueva_contrasenia, nuevo_usuario, usuario, contrasenia ):
+def nuevo_jugador(nueva_contrasenia, nuevo_usuario):
     lista_usuarios, session_id= login_ganamos('adminflamingo','1111aaaa')
     print(session_id)
 
