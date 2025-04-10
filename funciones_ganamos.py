@@ -18,8 +18,8 @@ def login_ganamos(usuario,contrasenia):
     }
 
     proxies = {
-        "http": "http://45.191.4.253:8080",
-        "https": "http://45.191.4.253:8080"
+        "http": "http://190.122.88.116:6969",
+        "https": "http://190.122.88.116:6969"
     }
 
     headers = {
@@ -195,8 +195,8 @@ def nuevo_jugador(nueva_contrasenia, nuevo_usuario):
     }
     
     proxies = {
-        "http": "http://45.191.4.253:8080",
-        "https": "http://45.191.4.253:8080"
+        "http": "http://190.122.88.116:6969",
+        "https": "http://190.122.88.116:6969"
     }
 
     header_check = {
