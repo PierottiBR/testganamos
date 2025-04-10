@@ -18,8 +18,8 @@ def login_ganamos(usuario,contrasenia):
     }
 
     proxies = {
-        "http": "http://190.122.88.116:6969",
-        "https": "http://190.122.88.116:6969"
+        "http": "http://181.114.225.184:8080",
+        "https": "http://181.114.225.184:8080"
     }
 
     headers = {
@@ -195,8 +195,8 @@ def nuevo_jugador(nueva_contrasenia, nuevo_usuario):
     }
     
     proxies = {
-        "http": "http://190.122.88.116:6969",
-        "https": "http://190.122.88.116:6969"
+        "http": "http://181.114.225.184:8080",
+        "https": "http://181.114.225.184:8080"
     }
 
     header_check = {
@@ -231,9 +231,7 @@ def guardar_usuario(usuario, contraseña):
 
     resultado, lista_usuarios = nuevo_jugador(
         nuevo_usuario=usuario,
-        nueva_contrasenia=contraseña,
-        usuario='adminflamingo',
-        contrasenia='1111aaaa'
+        nueva_contrasenia=contraseña
     )
 
     if 'Usuario creado' in resultado:
